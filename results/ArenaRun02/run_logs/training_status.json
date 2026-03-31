@@ -1,0 +1,29 @@
+{
+    "ArenaAgent": {
+        "checkpoints": [
+            {
+                "steps": 260468,
+                "file_path": "results\\ArenaRun02\\ArenaAgent\\ArenaAgent-260468.onnx",
+                "reward": 1.1346292848587036,
+                "creation_time": 1774942284.7149968,
+                "auxillary_file_paths": [
+                    "results\\ArenaRun02\\ArenaAgent\\ArenaAgent-260468.pt"
+                ]
+            }
+        ],
+        "final_checkpoint": {
+            "steps": 260468,
+            "file_path": "results\\ArenaRun02\\ArenaAgent.onnx",
+            "reward": 1.1346292848587036,
+            "creation_time": 1774942284.7149968,
+            "auxillary_file_paths": [
+                "results\\ArenaRun02\\ArenaAgent\\ArenaAgent-260468.pt"
+            ]
+        }
+    },
+    "metadata": {
+        "stats_format_version": "0.3.0",
+        "mlagents_version": "1.1.0",
+        "torch_version": "2.2.2+cu121"
+    }
+}

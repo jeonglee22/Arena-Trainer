@@ -60,13 +60,17 @@ public class ArenaAgent : Agent
 
         // 공격 행동 (적과 가까울 때)
         int attack = actions.DiscreteActions[0]; // 0: 공격 안함, 1: 공격
-        attackTimer -= Time.deltaTime;
+        attackTimer -= Time.fixedDeltaTime;
 
         float currentDistance = Vector2.Distance(transform.localPosition, enemy.localPosition);
 
         // 추적 보상/패널티
         float distanceDiff = previousDistance - currentDistance;
-        AddReward(distanceDiff * 0.01f); // 가까워지면 보상, 멀어지면 패널티
+
+        if (distanceDiff > 0)
+            AddReward(distanceDiff * 0.05f); // 가까워지면 보상
+        else
+            AddReward(distanceDiff * 0.01f); // 멀어지면 패널티
         previousDistance = currentDistance;
 
         if (attack == 1 && attackTimer <= 0f)
@@ -82,7 +86,7 @@ public class ArenaAgent : Agent
             else
             {
                 // 공격 빗나감
-                AddReward(-0.05f);
+                AddReward(-0.01f);
             }
         }
 
@@ -99,6 +103,23 @@ public class ArenaAgent : Agent
 
         var disc = actionsOut.DiscreteActions;
         disc[0] = Input.GetKey(KeyCode.Space) ? 1 : 0; // 스페이스바 공격
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            // 피격 패널티
+            AddReward(-0.1f);
+            EndEpisode();
+        }
+    }
+
+    public void OnHit()
+    {
+        // 피격 패널티
+        AddReward(-0.1f);
+        EndEpisode();
     }
 }
 /*
