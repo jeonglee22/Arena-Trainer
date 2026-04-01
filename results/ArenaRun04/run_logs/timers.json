@@ -1,0 +1,47 @@
+{
+    "name": "root",
+    "metadata": {
+        "timer_format_version": "0.1.0",
+        "start_time_seconds": "1775028210",
+        "python_version": "3.10.12 | packaged by Anaconda, Inc. | (main, Jul  5 2023, 19:01:18) [MSC v.1916 64 bit (AMD64)]",
+        "command_line_arguments": "C:\\Users\\new26\\miniconda3\\envs\\mlagents\\Scripts\\mlagents-learn config/ppo/ArenaTrainer.yaml --run-id=ArenaRun04 --force",
+        "mlagents_version": "1.1.0",
+        "mlagents_envs_version": "1.1.0",
+        "communication_protocol_version": "1.5.0",
+        "pytorch_version": "2.2.2+cu121",
+        "numpy_version": "1.23.5",
+        "end_time_seconds": "1775028215"
+    },
+    "total": 4.597922199871391,
+    "count": 1,
+    "self": 0.0066667001228779554,
+    "children": {
+        "run_training.setup": {
+            "total": 0.12461559986695647,
+            "count": 1,
+            "self": 0.12461559986695647
+        },
+        "TrainerController.start_learning": {
+            "total": 4.466639899881557,
+            "count": 1,
+            "self": 0.00039570010267198086,
+            "children": {
+                "TrainerController._reset_env": {
+                    "total": 4.466233300045133,
+                    "count": 1,
+                    "self": 4.466233300045133
+                },
+                "trainer_threads": {
+                    "total": 1.2998934835195541e-06,
+                    "count": 1,
+                    "self": 1.2998934835195541e-06
+                },
+                "TrainerController._save_models": {
+                    "total": 9.599840268492699e-06,
+                    "count": 1,
+                    "self": 9.599840268492699e-06
+                }
+            }
+        }
+    }
+}

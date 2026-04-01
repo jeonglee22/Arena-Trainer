@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
-    public float moveSpeed = 2f;
-    public float changeDirectionInterval = 2f;  // 방향 바꾸는 주기
+    [SerializeField] private float moveSpeed = 2f;
+    [SerializeField] private float changeDirectionInterval = 2f;  // 방향 바꾸는 주기
 
     private Rigidbody2D rb;
     private Vector2 moveDirection;
@@ -42,7 +42,7 @@ public class EnemyController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            moveDirection = -moveDirection;
+            PickRandomDirection();
             timer = changeDirectionInterval;
         }
     }

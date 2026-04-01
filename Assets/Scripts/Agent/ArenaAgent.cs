@@ -8,6 +8,7 @@ public class ArenaAgent : Agent
     [SerializeField] private Transform enemy;        // 적 오브젝트 연결
     [SerializeField] private float moveSpeed = 3f;   // 이동 속도
     private Rigidbody2D rb;
+    private Rigidbody2D enemyRb;
 
     private float attackRange = 1.5f; // 공격 범위
     private float attackCooldown = 0.5f; // 공격 쿨다운
@@ -18,6 +19,7 @@ public class ArenaAgent : Agent
     public override void Initialize()
     {
         rb = GetComponent<Rigidbody2D>();
+        enemyRb = enemy.GetComponent<Rigidbody2D>();
     }
 
     // 에피소드 시작마다 호출 (리셋)
@@ -25,14 +27,17 @@ public class ArenaAgent : Agent
     {
         // Agent 위치 랜덤 리셋
         transform.localPosition = new Vector2(
-            Random.Range(-1f, -5f),
-            Random.Range(-2f, 2f)
+            Random.Range(-5f, 5f),
+            Random.Range(-3f, 3f)
         );
-        // Enemy 위치 랜덤 리셋
-        enemy.localPosition = new Vector2(
-            Random.Range(1f, 5f),
-            Random.Range(-2f, 2f)
-        );
+
+        // Enemy 위치 - Agent와 최소 거리 보장
+        do {
+            enemy.localPosition = new Vector2(
+                Random.Range(-5f, 5f),
+                Random.Range(-3f, 3f)
+            );
+        } while (Vector2.Distance(transform.localPosition, enemy.localPosition) < 4f);
 
         attackTimer = 0f;
         previousDistance = Vector2.Distance(transform.localPosition, enemy.localPosition);
@@ -47,8 +52,9 @@ public class ArenaAgent : Agent
         // 적과의 방향 벡터
         Vector2 dir = enemy.localPosition - transform.localPosition;
         sensor.AddObservation(dir.normalized);            // 방향 (x, y)
+        sensor.AddObservation(enemyRb.linearVelocity);           // 속도 (x, y)
     }
-    // 총 6개 float 값 관찰
+    // 총 8개 float 값 관찰
 
     // 학습된 행동 실행
     public override void OnActionReceived(ActionBuffers actions)
@@ -63,15 +69,18 @@ public class ArenaAgent : Agent
         attackTimer -= Time.fixedDeltaTime;
 
         float currentDistance = Vector2.Distance(transform.localPosition, enemy.localPosition);
+        AddReward(-currentDistance * 0.001f);  // 멀수록 매 스텝 패널티        
 
-        // 추적 보상/패널티
-        float distanceDiff = previousDistance - currentDistance;
+        // // 추적 보상/패널티 -> 적 위치 예측하여 보상 계산
+        // Vector2 predictedEnemyPos = (Vector2)enemy.localPosition + enemyRb.linearVelocity * 0.1f;
+        // float predictedDistance = Vector2.Distance(
+        //     transform.localPosition, predictedEnemyPos);
+        // float distanceDiff = previousDistance - predictedDistance;
 
-        if (distanceDiff > 0)
-            AddReward(distanceDiff * 0.05f); // 가까워지면 보상
-        else
-            AddReward(distanceDiff * 0.01f); // 멀어지면 패널티
-        previousDistance = currentDistance;
+        // if (distanceDiff > 0)
+        //     AddReward(distanceDiff * 0.005f); // 가까워지면 보상
+        // else
+        //     AddReward(distanceDiff * 0.001f); // 멀어지면 패널티
 
         if (attack == 1 && attackTimer <= 0f)
         {
@@ -80,7 +89,7 @@ public class ArenaAgent : Agent
             if (currentDistance <= attackRange)
             {
                 // 공격 명중
-                AddReward(1.0f);
+                AddReward(5.0f);
                 EndEpisode();
             }
             else
@@ -109,8 +118,8 @@ public class ArenaAgent : Agent
     {
         if (collision.gameObject.CompareTag("Wall"))
         {
-            // 피격 패널티
-            AddReward(-0.1f);
+            // 벽 충돌 패널티
+            AddReward(-0.5f);
             EndEpisode();
         }
     }
@@ -118,7 +127,7 @@ public class ArenaAgent : Agent
     public void OnHit()
     {
         // 피격 패널티
-        AddReward(-0.1f);
+        AddReward(-0.5f);
         EndEpisode();
     }
 }
